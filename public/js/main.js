@@ -12,6 +12,25 @@ document.querySelector("#formAgregarProduco").addEventListener("submit",async (e
     })
 })
 
+document.querySelector("#loginForm").addEventListener("submit",async (e) =>{
+    e.preventDefault();
+    let nombre = document.querySelector("#inputNombre").value
+    
+    if (nombre != ""){
+        await fetch("/login",{
+            method: "post",
+            headers:{
+                'content-Type' : 'application/json'
+            },
+            body: JSON.stringify({
+                nombre: nombre
+            })
+        })
+        console.log('llegue');
+    }
+
+})
+
 document.querySelector("#formMensajes").addEventListener("submit", e=> {
     e.preventDefault();
     console.log('123');
@@ -87,9 +106,16 @@ socket.on("messages_received", async (data) => {
     document.querySelector("#compresion").innerHTML = porcentaje
 })
 
+
 socket.on("actualizarProductos", async data => {
     mostrarProductos(data);
 })
+
+
+socket.on("bienvenido", async nombre => {
+    mostrarBienvenido(nombre);
+})
+
 
 async function mostrarProductos (data) {
     const fetchTemplateHBS = await fetch("../views/list_products.hbs");
@@ -97,4 +123,12 @@ async function mostrarProductos (data) {
     const template = Handlebars.compile(templateHBS);
     const html = template({products: data});
     document.querySelector("#list_Productos").innerHTML = html
+}
+
+async function mostrarBienvenido (nombre) {
+    const fetchTemplateHBS = await fetch("../views/bienvenido.hbs");
+    const templateHBS = await fetchTemplateHBS.text();
+    const template = Handlebars.compile(templateHBS);
+    const html = template({nombre: nombre});
+    document.querySelector("#bienvenido").innerHTML = html
 }
