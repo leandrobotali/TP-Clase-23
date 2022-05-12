@@ -1,6 +1,7 @@
 const { faker } = require('@faker-js/faker')
 
 const generarProductos = () =>{
+    console.log('desde productos');
     const productos = []
     
     for (let index = 0; index < 5; index++) {

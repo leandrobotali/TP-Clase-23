@@ -1,4 +1,10 @@
 const socket = io.connect();
+let URLinicial = "" 
+
+
+window.addEventListener('load',()=>{
+    URLinicial = window.location.href
+})
 
 
 document.querySelector("#formAgregarProduco").addEventListener("submit",async (e) =>{
@@ -26,10 +32,10 @@ document.querySelector("#loginForm").addEventListener("submit",async (e) =>{
                 nombre: nombre
             })
         })
-        console.log('llegue');
     }
-
+    
 })
+
 
 document.querySelector("#formMensajes").addEventListener("submit", e=> {
     e.preventDefault();
@@ -113,7 +119,24 @@ socket.on("actualizarProductos", async data => {
 
 
 socket.on("bienvenido", async nombre => {
-    mostrarBienvenido(nombre);
+    await mostrarBienvenido(nombre);
+    $("#logout").on("click", async function(){
+        await fetch("/login/logout",{
+            method: "get",
+            headers:{
+                'content-Type' : 'application/json'
+            },
+        })
+    });
+}
+)
+socket.on("logout", async(nombre) => {
+    // window.location.href = 'http://localhost:8080'
+    await mostrarHastaLuego(nombre)
+    setTimeout(()=>{
+        window.location.href = URLinicial
+    }, 2000);
+
 })
 
 
@@ -127,6 +150,14 @@ async function mostrarProductos (data) {
 
 async function mostrarBienvenido (nombre) {
     const fetchTemplateHBS = await fetch("../views/bienvenido.hbs");
+    const templateHBS = await fetchTemplateHBS.text();
+    const template = Handlebars.compile(templateHBS);
+    const html = template({nombre: nombre});
+    document.querySelector("#bienvenido").innerHTML = html
+}
+
+async function mostrarHastaLuego (nombre) {
+    const fetchTemplateHBS = await fetch("../views/hastaluego.hbs");
     const templateHBS = await fetchTemplateHBS.text();
     const template = Handlebars.compile(templateHBS);
     const html = template({nombre: nombre});

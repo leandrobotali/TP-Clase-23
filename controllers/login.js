@@ -1,17 +1,18 @@
-const renderLogin = (req,res) => {
-    console.log(req.session.user);
-    if (req.session.user) {
-        res.send(req.app.io.sockets.emit("bienvenido", req.session.user))
-    }
-}
-
 const login = (req,res) => {
     const { nombre } = req.body
     req.session.user = nombre
-    console.log(req.session.user);
-    res.send(req.app.io.sockets.emit("bienvenido", req.session.user))
+    const user = (req.session.user).toUpperCase()
+    res.send(req.app.io.sockets.emit("bienvenido", user))
     // res.redirect('/')
 }
 
+const logout= (req,res) => {
+    const user = (req.session.user).toUpperCase()
+    req.session.destroy(err => {
+        if(!err) res.send(req.app.io.sockets.emit("logout", user))
+        else res.send({status: 'Logout ERROR', body: err})
+    })
+}
 
-module.exports = {renderLogin, login}
+
+module.exports = { login,logout }

@@ -53,13 +53,13 @@ app.use(session({
 //-------------------------------------
 //Routes
 
+app.use('/api/productos-test', productosRouter);
 app.use('/login', loginRouter);
 app.use('/', (req,res) => {
     if (req.session.user) {
-        res.send(req.app.io.sockets.emit("bienvenido", req.session.user))
+        res.send(io.sockets.emit("bienvenido", req.session.user))
     }
 })
-app.use('/api/productos-test', productosRouter);
 
 //----------------------------------------
 //----------------------------------------
